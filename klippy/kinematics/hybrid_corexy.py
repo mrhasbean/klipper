@@ -11,7 +11,6 @@ from . import idex_modes
 class HybridCoreXYKinematics:
     def __init__(self, toolhead, config):
         self.printer = config.get_printer()
-        printer_config = config.getsection('printer')
         # itersolve parameters
         self.rails = [ stepper.PrinterRail(config.getsection('stepper_x')),
                        stepper.LookupMultiRail(config.getsection('stepper_y')),
@@ -41,7 +40,8 @@ class HybridCoreXYKinematics:
             dc_rail_1 = idex_modes.DualCarriagesRail(
                 self.printer, self.rails[3], axis=0, active=False,
                 stepper_alloc_active=('corexy_stepper_alloc', b'+'),
-                stepper_alloc_inactive=('cartesian_stepper_alloc', b'y'))
+                stepper_alloc_inactive=('cartesian_stepper_alloc', b'y'),
+                stepper_alloc_reverse=('corexy_reverse_stepper_alloc', b'-'))
             self.dc_module = idex_modes.DualCarriages(self.printer,
                         dc_rail_0, dc_rail_1, axis=0)
         for s in self.get_steppers():
