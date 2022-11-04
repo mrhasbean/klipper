@@ -16,9 +16,6 @@ class DualCarriages:
         gcode.register_command(
                    'SET_DUAL_CARRIAGE', self.cmd_SET_DUAL_CARRIAGE,
                    desc=self.cmd_SET_DUAL_CARRIAGE_help)
-        gcode.register_command(
-                   'SET_DUAL_CARRIAGE_MODE', self.cmd_SET_DUAL_CARRIAGE_MODE,
-                   desc=self.cmd_SET_DUAL_CARRIAGE_MODE_help)
     def toggle_active_dc_rail(self, index):
         toolhead = self.printer.lookup_object('toolhead')
         toolhead.flush_step_generation()
@@ -166,14 +163,16 @@ class DualCarriages:
             elif (self.saved_state['active_carriage'] == 'CARRIAGE_1'
                         and not self.dc[1].is_active()):
                 self.toggle_active_dc_rail(1)
-    cmd_SET_DUAL_CARRIAGE_help = "Set which carriage is active"
+    cmd_SET_DUAL_CARRIAGE_help = "Set which carriage / mode is active"
     def cmd_SET_DUAL_CARRIAGE(self, gcmd):
         index = gcmd.get_int('CARRIAGE', minval=0, maxval=1)
+        if index is None:
+            index = 0
+            mode = gcmd.get('MODE')
+        else:
+            mode = 'FULL_CONTROL'
         if not self.dc[index].is_active():
             self.toggle_active_dc_rail(index)
-    cmd_SET_DUAL_CARRIAGE_MODE_help = "Set which mode is active"
-    def cmd_SET_DUAL_CARRIAGE_MODE(self, gcmd):
-        mode = gcmd.get('MODE')
         self.activate_dc_mode(mode)
 
 class DualCarriagesRail:
