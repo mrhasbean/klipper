@@ -307,15 +307,13 @@ The following command is available when the
 enabled.
 
 #### SET_DUAL_CARRIAGE
-`SET_DUAL_CARRIAGE CARRIAGE=[0|1]`: This command will set the active
-carriage. It is typically invoked from the activate_gcode and
-deactivate_gcode fields in a multiple extruder configuration.
-
-#### SET_DUAL_CARRIAGE_MODE
-`SET_DUAL_CARRIAGE_MODE MODE=[FULL_CONTROL|DUPLICATION|MIRRORED]`: This
-   command will set the active dual_carriage mode. The user must position the
-   CARRIAGE_1 before activate the DUPLICATION mode. This commande is available
-   for hybrid_corexy and hybrid_corexz robots.
+`SET_DUAL_CARRIAGE CARRIAGE=[0|1]|MODE=[DUPLICATION|MIRRORED]`: This
+command will set the active carriage or carriage mode. It is typically
+invoked from the activate_gcode and deactivate_gcode fields in a multiple
+extruder configuration. Selecting a specific CARRIAGE infers FULL_CONTROL
+mode. Similarly selecting a specific MODE selects BOTH carriages. This
+command is available for hybrid_corexy, hybrid_corexz and cartesian IDEX
+robots.
 
 ### [endstop_phase]
 
