@@ -16,26 +16,26 @@ class CartKinematics:
         for rail, axis in zip(self.rails, 'xyz'):
             rail.setup_itersolve('cartesian_stepper_alloc', axis.encode())
         ranges = [r.get_range() for r in self.rails]
- 		self.axes_min = toolhead.Coord(*[r[0] for r in ranges], e=0.)
- 		self.axes_max = toolhead.Coord(*[r[1] for r in ranges], e=0.)
- 		self.dc_module = None
- 		# Check for dual carriage support
- 		if config.has_section('dual_carriage'):
-     		dc_config = config.getsection('dual_carriage')
-     		dc_config.getchoice('axis', {'x': 'x', 'y': 'y'})
-     		self.rails.append(stepper.PrinterRail(dc_config))
-     		#self.rails[1].get_endstops()[0][0].add_stepper(
-     		#    self.rails[3].get_steppers()[0])
-     		self.rails[3].setup_itersolve('cartesian_stepper_alloc', 'y')
-     		dc_rail_0 = idex_modes.DualCarriagesRail(
-         		self.printer, self.rails[0], axis=0, active=True,
-         		stepper_alloc_active=('cartesian_stepper_alloc', 'x'))
-     		dc_rail_1 = idex_modes.DualCarriagesRail(
-         		self.printer, self.rails[3], axis=0, active=False,
-         		stepper_alloc_active=('cartesian_stepper_alloc', 'x'),
-         		stepper_alloc_reverse=('cartesian_reverse_stepper_alloc', 'x'))
-     		self.dc_module = idex_modes.DualCarriages(self.printer,
-                 		dc_rail_0, dc_rail_1, axis=0)
+        self.axes_min = toolhead.Coord(*[r[0] for r in ranges], e=0.)
+        self.axes_max = toolhead.Coord(*[r[1] for r in ranges], e=0.)
+        self.dc_module = None
+        # Check for dual carriage support
+        if config.has_section('dual_carriage'):
+            dc_config = config.getsection('dual_carriage')
+            dc_config.getchoice('axis', {'x': 'x', 'y': 'y'})
+            self.rails.append(stepper.PrinterRail(dc_config))
+            #self.rails[1].get_endstops()[0][0].add_stepper(
+            #    self.rails[3].get_steppers()[0])
+            self.rails[3].setup_itersolve('cartesian_stepper_alloc', 'y')
+            dc_rail_0 = idex_modes.DualCarriagesRail(
+                self.printer, self.rails[0], axis=0, active=True,
+                stepper_alloc_active=('cartesian_stepper_alloc', 'x'))
+            dc_rail_1 = idex_modes.DualCarriagesRail(
+                self.printer, self.rails[3], axis=0, active=False,
+                stepper_alloc_active=('cartesian_stepper_alloc', 'x'),
+                stepper_alloc_reverse=('cartesian_reverse_stepper_alloc', 'x'))
+            self.dc_module = idex_modes.DualCarriages(self.printer,
+                        dc_rail_0, dc_rail_1, axis=0)
         for s in self.get_steppers():
             s.set_trapq(toolhead.get_trapq())
             toolhead.register_step_generator(s.generate_steps)
@@ -53,9 +53,9 @@ class CartKinematics:
     def calc_position(self, stepper_positions):
         return [stepper_positions[rail.get_name()] for rail in self.rails]
     def update_limits(self, i, range):
-     	self.limits[i] = range
- 	def override_rail(self, i, rail):
-     	self.rails[i] = rail
+        self.limits[i] = range
+    def override_rail(self, i, rail):
+        self.rails[i] = rail
     def set_position(self, newpos, homing_axes):
         for i, rail in enumerate(self.rails):
             rail.set_position(newpos)
@@ -81,11 +81,11 @@ class CartKinematics:
         # Each axis is homed independently and in order
         for axis in homing_state.get_axes():
             if (self.dc_module is not None and axis == 0):
-         		self.dc_module.save_idex_state()
-         		for i in [0,1]:
-             		self.dc_module.toggle_active_dc_rail(i)
-             		self._home_axis(homing_state, axis, self.rails[0])
-         		self.dc_module.restore_idex_state()
+                self.dc_module.save_idex_state()
+                for i in [0,1]:
+                    self.dc_module.toggle_active_dc_rail(i)
+                    self._home_axis(homing_state, axis, self.rails[0])
+                self.dc_module.restore_idex_state()
             else:
                 self._home_axis(homing_state, axis, self.rails[axis])
     def _motor_off(self, print_time):
@@ -95,7 +95,7 @@ class CartKinematics:
         for i in (0, 1, 2):
             if (move.axes_d[i]
                 and (end_pos[i] < self.limits[i][0]
-                 	or end_pos[i] > self.limits[i][1])):
+                    or end_pos[i] > self.limits[i][1])):
                 if self.limits[i][0] > self.limits[i][1]:
                     raise move.move_error("Must home axis first")
                 raise move.move_error()
